@@ -1,29 +1,25 @@
-import { createHash } from 'crypto';
-import { createWriteStream, promises as _promises, rmdirSync } from 'fs';
-import { homedir, tmpdir } from 'os';
-import { join, resolve, sep, dirname } from 'path';
-import { fileURLToPath } from 'url';
-import requestretry from 'requestretry';
+const { createHash } = require('crypto');
+const { createWriteStream, promises: _promises, rmdirSync } = require('fs');
+const { homedir, tmpdir } = require('os');
+const path = require('path');//,{ path.join, resolve, path.sep, dirname }
+const requestretry = require('requestretry');
 
-import { fontsCollection } from '../../fonts.js';
+const { fontsCollection } = require('../../fonts.js');
 
 const { access, readFile, writeFile, mkdir, readdir, copyFile, rename } = _promises;
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 const FONTS_URL = 'https://fonts.gologin.com/';
 const FONTS_DIR_NAME = 'fonts';
 
 const HOMEDIR = homedir();
-const BROWSER_PATH = join(HOMEDIR, '.gologin', 'browser');
+const BROWSER_PATH = path.join(HOMEDIR, '.gologin', 'browser');
 const OS_PLATFORM = process.platform;
 const DEFAULT_ORBITA_EXTENSIONS_NAMES = ['Google Hangouts', 'Chromium PDF Viewer', 'CryptoTokenExtension', 'Web Store'];
 const GOLOGIN_BASE_FOLDER_NAME = '.gologin';
 const GOLOGIN_TEST_FOLDER_NAME = '.gologin_test';
 const osPlatform = process.platform;
 
-export const downloadCookies = ({ profileId, ACCESS_TOKEN, API_BASE_URL }) =>
+const downloadCookies = ({ profileId, ACCESS_TOKEN, API_BASE_URL }) =>
   requestretry.get(`${API_BASE_URL}/browser/${profileId}/cookies`, {
     headers: {
       Authorization: `Bearer ${ACCESS_TOKEN}`,
@@ -39,7 +35,7 @@ export const downloadCookies = ({ profileId, ACCESS_TOKEN, API_BASE_URL }) =>
     return { body: [] };
   });
 
-export const uploadCookies = ({ cookies = [], profileId, ACCESS_TOKEN, API_BASE_URL }) =>
+const uploadCookies = ({ cookies = [], profileId, ACCESS_TOKEN, API_BASE_URL }) =>
   requestretry.post(`${API_BASE_URL}/browser/${profileId}/cookies/?encrypted=true`, {
     headers: {
       Authorization: `Bearer ${ACCESS_TOKEN}`,
@@ -55,12 +51,12 @@ export const uploadCookies = ({ cookies = [], profileId, ACCESS_TOKEN, API_BASE_
     return e;
   });
 
-export const downloadFonts = async (fontsList = [], profilePath) => {
+const downloadFonts = async (fontsList = [], profilePath) => {
   if (!fontsList.length) {
     return;
   }
 
-  const browserFontsPath = join(BROWSER_PATH, FONTS_DIR_NAME);
+  const browserFontsPath = path.join(BROWSER_PATH, FONTS_DIR_NAME);
   await mkdir(browserFontsPath, { recursive: true });
 
   const files = await readdir(browserFontsPath);
@@ -71,7 +67,7 @@ export const downloadFonts = async (fontsList = [], profilePath) => {
     retryDelay: 2000,
     timeout: 30 * 1000,
   })
-    .pipe(createWriteStream(join(browserFontsPath, font))),
+    .pipe(createWriteStream(path.join(browserFontsPath, font))),
   );
 
   if (promises.length) {
@@ -79,12 +75,12 @@ export const downloadFonts = async (fontsList = [], profilePath) => {
   }
 
   promises = fontsList.map((font) =>
-    copyFile(join(browserFontsPath, font), join(profilePath, FONTS_DIR_NAME, font)));
+    copyFile(path.join(browserFontsPath, font), path.join(profilePath, FONTS_DIR_NAME, font)));
 
   await Promise.all(promises);
 };
 
-export const composeFonts = async (fontsList = [], profilePath, differentOs = false) => {
+const composeFonts = async (fontsList = [], profilePath, differentOs = false) => {
   if (!(fontsList.length && profilePath)) {
     return;
   }
@@ -100,7 +96,7 @@ export const composeFonts = async (fontsList = [], profilePath, differentOs = fa
   fontsToDownload.push('LICENSE.txt');
   fontsToDownload.push('OFL.txt');
 
-  const pathToFontsDir = join(profilePath, FONTS_DIR_NAME);
+  const pathToFontsDir = path.join(profilePath, FONTS_DIR_NAME);
   const fontsDirExists = await access(pathToFontsDir).then(() => true, () => false);
   if (fontsDirExists) {
     rmdirSync(pathToFontsDir, { recursive: true });
@@ -114,22 +110,22 @@ export const composeFonts = async (fontsList = [], profilePath, differentOs = fa
   }
 };
 
-export const copyFontsConfigFile = async (profilePath) => {
+const copyFontsConfigFile = async (profilePath) => {
   if (!profilePath) {
     return;
   }
 
-  const fileContent = await readFile(resolve(__dirname, '..', '..', 'fonts_config'), 'utf-8');
-  const result = fileContent.replace(/\$\$GOLOGIN_FONTS\$\$/g, join(profilePath, FONTS_DIR_NAME));
+  const fileContent = await readFile(path.resolve(__dirname, '..', '..', 'fonts_config'), 'utf-8');
+  const result = fileContent.replace(/\$\$GOLOGIN_FONTS\$\$/g, path.join(profilePath, FONTS_DIR_NAME));
 
-  const defaultFolderPath = join(profilePath, 'Default');
+  const defaultFolderPath = path.join(profilePath, 'Default');
   await mkdir(defaultFolderPath, { recursive: true });
-  await writeFile(join(defaultFolderPath, 'fonts_config'), result);
+  await writeFile(path.join(defaultFolderPath, 'fonts_config'), result);
 };
 
-export const setExtPathsAndRemoveDeleted = (settings = {}, profileExtensionsCheckRes = [], profileId = '') => {
+const setExtPathsAndRemoveDeleted = (settings = {}, profileExtensionsCheckRes = [], profileId = '') => {
   const formattedLocalExtArray = profileExtensionsCheckRes.map((el) => {
-    const [extFolderName = ''] = el.split(sep).reverse();
+    const [extFolderName = ''] = el.split(path.sep).reverse();
     const [originalId] = extFolderName.split('@');
     if (!originalId) {
       return null;
@@ -169,12 +165,12 @@ export const setExtPathsAndRemoveDeleted = (settings = {}, profileExtensionsChec
 
     extensionsSettings[extensionId].path = extPath;
 
-    const splittedPath = extPath.split(sep);
+    const splittedPath = extPath.split(path.sep);
     const isExtensionManageable = ['chrome-extensions', 'user-extensions'].some(substring => extPath.includes(substring))
       && [GOLOGIN_BASE_FOLDER_NAME, GOLOGIN_TEST_FOLDER_NAME].some(substring => extPath.includes(substring));
 
     if (isExtensionManageable) {
-      const [extFolderName] = extPath.split(sep).reverse();
+      const [extFolderName] = extPath.split(path.sep).reverse();
       [originalId] = extFolderName.split('@');
     } else if (splittedPath.length === 2) {
       [originalId] = splittedPath;
@@ -201,9 +197,9 @@ export const setExtPathsAndRemoveDeleted = (settings = {}, profileExtensionsChec
     });
 
     if (initialExtName !== extensionId) {
-      const profilePath = join(tmpdir(), `gologin_profile_${profileId}`);
-      const extSyncFolder = join(profilePath, 'Default', 'Sync Extension Settings', initialExtName);
-      const newSyncFolder = join(profilePath, 'Default', 'Sync Extension Settings', extensionId);
+      const profilePath = path.join(tmpdir(), `gologin_profile_${profileId}`);
+      const extSyncFolder = path.join(profilePath, 'Default', 'Sync Extension Settings', initialExtName);
+      const newSyncFolder = path.join(profilePath, 'Default', 'Sync Extension Settings', extensionId);
 
       await rename(extSyncFolder, newSyncFolder).catch(() => null);
     }
@@ -218,7 +214,7 @@ export const setExtPathsAndRemoveDeleted = (settings = {}, profileExtensionsChec
   return Promise.all(promises).then(() => extensionsSettings);
 };
 
-export const setOriginalExtPaths = async (settings = {}, originalExtensionsFolder = '') => {
+const setOriginalExtPaths = async (settings = {}, originalExtensionsFolder = '') => {
   if (!originalExtensionsFolder) {
     return null;
   }
@@ -232,7 +228,7 @@ export const setOriginalExtPaths = async (settings = {}, originalExtensionsFolde
   }
 
   const promises = originalExtensionsList.map(async (originalId) => {
-    const extFolderPath = join(originalExtensionsFolder, originalId);
+    const extFolderPath = path.join(originalExtensionsFolder, originalId);
     const extFolderContent = await readdir(extFolderPath);
     if (!extFolderPath.length) {
       return {};
@@ -241,7 +237,7 @@ export const setOriginalExtPaths = async (settings = {}, originalExtensionsFolde
     if (extFolderContent.includes('manifest.json')) {
       return {
         originalId,
-        path: join(originalExtensionsFolder, originalId),
+        path: path.join(originalExtensionsFolder, originalId),
       };
     }
 
@@ -249,7 +245,7 @@ export const setOriginalExtPaths = async (settings = {}, originalExtensionsFolde
 
     return {
       originalId,
-      path: join(originalExtensionsFolder, originalId, version),
+      path: path.join(originalExtensionsFolder, originalId, version),
     };
   });
 
@@ -273,12 +269,12 @@ export const setOriginalExtPaths = async (settings = {}, originalExtensionsFolde
   return extensionsSettings;
 };
 
-export const recalculateId = async ({ localExtObj, extensionId, extensionsSettings, currentExtSettings }) => {
+const recalculateId = async ({ localExtObj, extensionId, extensionsSettings, currentExtSettings }) => {
   if (currentExtSettings.manifest?.key) {
     return extensionId;
   }
 
-  const manifestFilePath = join(localExtObj.path, 'manifest.json');
+  const manifestFilePath = path.join(localExtObj.path, 'manifest.json');
   const manifestString = await readFile(manifestFilePath, { encoding: 'utf8' }).catch(() => ({}));
 
   if (!manifestString) {
@@ -332,4 +328,15 @@ const extIdEncoding = {
   d: 'n',
   e: 'o',
   f: 'p',
+};
+
+module.exports = {
+  downloadCookies,
+  uploadCookies,
+  downloadFonts,
+  composeFonts,
+  copyFontsConfigFile,
+  setExtPathsAndRemoveDeleted,
+  setOriginalExtPaths,
+  recalculateId,
 };

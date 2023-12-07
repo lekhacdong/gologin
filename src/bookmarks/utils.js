@@ -1,8 +1,8 @@
-import { promises as _promises } from 'fs';
+const { promises: _promises } = require('fs');
 
 const { readFile } = _promises;
 
-export const getCurrentProfileBookmarks = async (pathToBookmarks) => {
+const getCurrentProfileBookmarks = async (pathToBookmarks) => {
   const currentBookmarksFileData = await readFile(pathToBookmarks, { encoding: 'utf-8' });
 
   let bookmarks = {};
@@ -13,4 +13,7 @@ export const getCurrentProfileBookmarks = async (pathToBookmarks) => {
   }
 
   return bookmarks;
+};
+module.exports = {
+  getCurrentProfileBookmarks
 };

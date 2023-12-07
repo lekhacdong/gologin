@@ -1,9 +1,9 @@
-import { homedir } from 'os';
-import { join, sep } from 'path';
+const { homedir } = require('os');
+const { join, sep } = require('path');
 
-import { deleteExtensionArchive, extractExtension } from '../extensions/extensions-extractor.js';
+const { deleteExtensionArchive, extractExtension } = require('../extensions/extensions-extractor.js');
 
-export const API_URL = 'https://api.gologin.com';
+const API_URL = 'https://api.gologin.com';
 
 const HOMEDIR = homedir();
 const CHROME_EXT_DIR_NAME = 'chrome-extensions';
@@ -22,8 +22,9 @@ const composeExtractionPromises = (filteredArchives, destPath = CHROME_EXTENSION
 );
 
 const _composeExtractionPromises = composeExtractionPromises;
-export { _composeExtractionPromises as composeExtractionPromises };
+exports.composeExtractionPromises = _composeExtractionPromises;
 const _USER_EXTENSIONS_PATH = USER_EXTENSIONS_PATH;
-export { _USER_EXTENSIONS_PATH as USER_EXTENSIONS_PATH };
+exports.USER_EXTENSIONS_PATH = _USER_EXTENSIONS_PATH;
 const _CHROME_EXTENSIONS_PATH = CHROME_EXTENSIONS_PATH;
-export { _CHROME_EXTENSIONS_PATH as CHROME_EXTENSIONS_PATH };
+exports.CHROME_EXTENSIONS_PATH = _CHROME_EXTENSIONS_PATH;
+exports.API_URL = API_URL

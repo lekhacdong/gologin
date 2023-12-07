@@ -46,7 +46,7 @@ const DEFAULT_FOLDER_USELESS_FILE = [
   },
 ];
 
-export const getDirectoriesToDeleteForNode = (routerSlash = '/') =>
+const getDirectoriesToDeleteForNode = (routerSlash = '/') =>
   DEFAULT_FOLDER_USELESS_FILE.reduce((res, el) => {
     const basePath = routerSlash + 'Default' + routerSlash + el.name;
     if (el.subs.length) {
@@ -58,7 +58,7 @@ export const getDirectoriesToDeleteForNode = (routerSlash = '/') =>
     return res;
   }, []);
 
-export const getDirectoriesForArchiver = () => DEFAULT_FOLDER_USELESS_FILE.reduce((res, el) => {
+const getDirectoriesForArchiver = () => DEFAULT_FOLDER_USELESS_FILE.reduce((res, el) => {
   const { name, subs, isDirectory } = el;
   const basePath = 'Default/' + name;
 
@@ -73,3 +73,8 @@ export const getDirectoriesForArchiver = () => DEFAULT_FOLDER_USELESS_FILE.reduc
 
   return res;
 }, []);
+
+module.exports = {
+  getDirectoriesToDeleteForNode,
+  getDirectoriesForArchiver,
+};

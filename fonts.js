@@ -1,4 +1,4 @@
-export const fontsCollection = [
+const fontsCollection = [
   {
     name: 'AIGDT',
     value: 'AIGDT',
@@ -4291,3 +4291,7 @@ export const fontsCollection = [
     value: 'ZWAdobeF',
   },
 ];
+
+module.exports = {
+  fontsCollection,
+}

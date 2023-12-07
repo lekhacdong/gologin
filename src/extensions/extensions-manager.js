@@ -1,16 +1,16 @@
-import { createWriteStream, promises as _promises } from 'fs';
-import { join, sep } from 'path';
-import request from 'requestretry';
+const { createWriteStream, promises: _promises } = require('fs');
+const { join, sep } = require('path');
+const request = require('requestretry');
 
-import { CHROME_EXTENSIONS_PATH, composeExtractionPromises, USER_EXTENSIONS_PATH } from '../utils/common.js';
-import UserExtensionsManager from './user-extensions-manager.js';
+const { CHROME_EXTENSIONS_PATH, composeExtractionPromises, USER_EXTENSIONS_PATH } = require('../utils/common.js');
+const { UserExtensionsManager } = require('./user-extensions-manager.js');
 
 const { mkdir, readdir, rmdir, unlink } = _promises;
 
 const EXTENSION_URL =
   'https://clients2.google.com/service/update2/crx?response=redirect&acceptformat=crx2,crx3&x=id%3D{ext_id}%26uc&prodversion=97.0.4692.71';
 
-export class ExtensionsManager extends UserExtensionsManager {
+class ExtensionsManager extends UserExtensionsManager {
   #existedChromeExtensions = [];
   #inited = false;
   #useLocalExtStorage = false;
@@ -225,7 +225,7 @@ export class ExtensionsManager extends UserExtensionsManager {
     await Promise.all(extractionPromises);
 
     const removeFoldersPromises = oldFolders.map(folder => (
-      rmdir(folder, { recursive: true, maxRetries: 3 }).catch(() => {})
+      rmdir(folder, { recursive: true, maxRetries: 3 }).catch(() => { })
     ));
 
     await Promise.all(removeFoldersPromises).then(() => this.#extensionsUpdating = false);
@@ -380,5 +380,5 @@ const getExtVersion = (metadata) => {
   return splitExtName.join('_');
 };
 
-export default ExtensionsManager;
+module.exports = { ExtensionsManager };
 

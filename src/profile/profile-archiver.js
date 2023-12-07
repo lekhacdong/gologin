@@ -1,12 +1,12 @@
-import AdmZip from 'adm-zip';
-import { promises as _promises } from 'fs';
-import path from 'path';
+const AdmZip = require('adm-zip');
+const { promises: _promises } = require('fs');
+const path = require('path');
 
-import { getDirectoriesForArchiver } from './profile-directories-to-remove.js';
+const { getDirectoriesForArchiver } = require('./profile-directories-to-remove.js');
 
 const { access } = _promises;
 
-export const archiveProfile = async (profileFolder = '', tryAgain = true) => {
+const archiveProfile = async (profileFolder = '', tryAgain = true) => {
   const folderExists = await access(profileFolder).then(() => true, () => false);
   if (!folderExists) {
     throw new Error('Invalid profile folder path: ' + profileFolder);
@@ -16,7 +16,7 @@ export const archiveProfile = async (profileFolder = '', tryAgain = true) => {
   archive.addLocalFolder(path.join(profileFolder, 'Default'), 'Default');
   try {
     archive.addLocalFile(path.join(profileFolder, 'First Run'));
-  } catch(e) {
+  } catch (e) {
     archive.addFile('First Run', Buffer.from(''));
   }
 
@@ -33,7 +33,7 @@ export const archiveProfile = async (profileFolder = '', tryAgain = true) => {
   return new Promise((resolve, reject) => archive.toBuffer(resolve, reject));
 };
 
-export const decompressProfile = async (zipPath = '', profileFolder = '') => {
+const decompressProfile = async (zipPath = '', profileFolder = '') => {
   const zipExists = await access(zipPath).then(() => true, () => false);
   if (!zipExists) {
     throw new Error('Invalid zip path: ' + zipPath);
@@ -59,7 +59,7 @@ export const decompressProfile = async (zipPath = '', profileFolder = '') => {
   archive.extractAllTo(profileFolder, true);
 };
 
-export const checkProfileArchiveIsValid = (zipObject) => {
+const checkProfileArchiveIsValid = (zipObject) => {
   if (!zipObject) {
     throw new Error('No zip object provided');
   }
@@ -84,3 +84,9 @@ const flatArray = (array = []) => array.map((elem) => {
 
   return elem;
 }).flat().filter(Boolean);
+
+module.exports = {
+  archiveProfile,
+  decompressProfile,
+  checkProfileArchiveIsValid,
+};

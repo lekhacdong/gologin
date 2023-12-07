@@ -32,7 +32,7 @@ const [_execPath, _filePath, GOLOGIN_API_TOKEN, GOLOGIN_PROFILE_ID] = process.ar
   await page.goto('https://www.amazon.com/-/dp/B0771V1JZX');
   const content = await page.content();
   const matchData = content.match(/'initial': (.*)}/);
-  if (matchData === null || matchData.length === 0){
+  if (matchData === null || matchData.length === 0) {
     console.log('no images found');
   } else {
     const data = JSON.parse(matchData[1]);

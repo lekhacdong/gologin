@@ -1,4 +1,4 @@
-export const checkAutoLang = (profileData, timezoneCheckResult) => {
+const checkAutoLang = (profileData, timezoneCheckResult) => {
   if (!profileData.autoLang) {
     return checkBrowserLang(profileData);
   }
@@ -27,7 +27,7 @@ export const checkAutoLang = (profileData, timezoneCheckResult) => {
         return acc;
       }
 
-      const qualityParam = 10-index;
+      const qualityParam = 10 - index;
       if (qualityParam > 0) {
         const separator = (resultLangsArr.length - index) < 2 ? '' : ',';
         gologinLangsArr.push(cur);
@@ -59,4 +59,9 @@ const checkBrowserLang = (profileData, defaultLocale = 'en-US') => {
   profileData.navigator.language = defaultLocale;
 
   return defaultLocale;
+};
+
+
+module.exports = {
+  checkAutoLang,
 };

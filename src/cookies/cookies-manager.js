@@ -1,7 +1,7 @@
-import { open } from 'sqlite';
-import sqlite3 from 'sqlite3';
-import { promises as fsPromises } from 'fs';
-import { join } from 'path';
+const { open } = require('sqlite');
+const sqlite3 = require('sqlite3');
+const { promises: fsPromises } = require('fs');
+const { join } = require('path');
 
 const { access } = fsPromises;
 const { Database, OPEN_READONLY } = sqlite3;
@@ -15,7 +15,7 @@ const SAME_SITE = {
   2: 'strict',
 };
 
-export const getDB = (filePath, readOnly = true) => {
+const getDB = (filePath, readOnly = true) => {
   const connectionOpts = {
     filename: filePath,
     driver: Database,
@@ -28,7 +28,7 @@ export const getDB = (filePath, readOnly = true) => {
   return open(connectionOpts);
 }
 
-export const getChunckedInsertValues = (cookiesArr) => {
+const getChunckedInsertValues = (cookiesArr) => {
   const todayUnix = Math.floor(new Date().getTime() / 1000.0);
   const chunckedCookiesArr = chunk(cookiesArr, MAX_SQLITE_VARIABLES);
 
@@ -82,7 +82,7 @@ export const getChunckedInsertValues = (cookiesArr) => {
   });
 }
 
-export const loadCookiesFromFile = async (filePath) => {
+const loadCookiesFromFile = async (filePath) => {
   let db;
   const cookies = [];
 
@@ -127,7 +127,7 @@ export const loadCookiesFromFile = async (filePath) => {
   return cookies;
 }
 
-export const unixToLDAP = (unixtime) => {
+const unixToLDAP = (unixtime) => {
   if (unixtime === 0) {
     return unixtime;
   }
@@ -138,7 +138,7 @@ export const unixToLDAP = (unixtime) => {
   return sum * 1000000;
 }
 
-export const ldapToUnix = (ldap) => {
+const ldapToUnix = (ldap) => {
   const ldapLength = ldap.toString().length;
   if (ldap === 0 || ldapLength > 18) {
     return ldap;
@@ -154,7 +154,7 @@ export const ldapToUnix = (ldap) => {
   return (_ldap / 10000 + win32filetime) / 1000;
 }
 
-export const buildCookieURL = (domain, secure, path) => {
+const buildCookieURL = (domain, secure, path) => {
   let domainWithoutDot = domain;
   if (domain.startsWith('.')) {
     domainWithoutDot = domain.substr(1);
@@ -163,7 +163,7 @@ export const buildCookieURL = (domain, secure, path) => {
   return 'http' + (secure ? 's' : '') + '://' + domainWithoutDot + path;
 }
 
-export const chunk = (arr, chunkSize = 1, cache = []) => {
+const chunk = (arr, chunkSize = 1, cache = []) => {
   const tmp = [...arr];
   if (chunkSize <= 0) {
     return cache;
@@ -176,7 +176,7 @@ export const chunk = (arr, chunkSize = 1, cache = []) => {
   return cache;
 }
 
-export const getCookiesFilePath = async (profileId, tmpdir) => {
+const getCookiesFilePath = async (profileId, tmpdir) => {
   const baseCookiesFilePath = join(tmpdir, `gologin_profile_${profileId}`, 'Default', 'Cookies');
   const bypassCookiesFilePath = join(tmpdir, `gologin_profile_${profileId}`, 'Default', 'Network', 'Cookies');
 
@@ -187,3 +187,13 @@ export const getCookiesFilePath = async (profileId, tmpdir) => {
       .catch(() => baseCookiesFilePath)
     );
 }
+module.exports = {
+  getDB,
+  getChunckedInsertValues,
+  loadCookiesFromFile,
+  unixToLDAP,
+  ldapToUnix,
+  buildCookieURL,
+  chunk,
+  getCookiesFilePath
+};

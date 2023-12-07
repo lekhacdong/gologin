@@ -1,12 +1,12 @@
-import { createWriteStream, promises as _promises } from 'fs';
-import { join, sep } from 'path';
-import request from 'requestretry';
+const { createWriteStream, promises: _promises } = require('fs');
+const { join, sep } = require('path');
+const request = require('requestretry');
 
-import { CHROME_EXTENSIONS_PATH, composeExtractionPromises, USER_EXTENSIONS_PATH } from '../utils/common.js';
+const { CHROME_EXTENSIONS_PATH, composeExtractionPromises, USER_EXTENSIONS_PATH } = require('../utils/common.js');
 
 const { readdir, readFile, stat, mkdir, copyFile } = _promises;
 
-export class UserExtensionsManager {
+class UserExtensionsManager {
   #existedUserExtensions = [];
   #API_BASE_URL = '';
   #ACCESS_TOKEN = '';
@@ -167,7 +167,7 @@ export class UserExtensionsManager {
 
   async getExtensionsNameAndImage(extensionsIds, pathToExtensions) {
     const isCheckLocalFiles = [CHROME_EXTENSIONS_PATH, USER_EXTENSIONS_PATH].includes(pathToExtensions);
-    const extensionFolderNames = await readdir(pathToExtensions).catch(() => {});
+    const extensionFolderNames = await readdir(pathToExtensions).catch(() => { });
     const filteredExtensionFolderNames = extensionFolderNames.filter(extensionFolder => extensionsIds.some(extensionId => !extensionFolder.includes('.zip') && extensionFolder.includes(extensionId)));
 
     if (!filteredExtensionFolderNames.length) {
@@ -199,7 +199,7 @@ export class UserExtensionsManager {
         const manifestName = manifestObject.name || '';
         const fieldNameInLocale = manifestName.replace(/__/g, '').split('MSG_')[1];
         const localePath = join(...pathToExtensionsFolder, '_locales', manifestObject.default_locale, 'messages.json');
-        const localeString = await readFile(localePath, 'utf8').catch(() => {});
+        const localeString = await readFile(localePath, 'utf8').catch(() => { });
 
         try {
           const parsedLocale = JSON.parse(localeString.trim());
@@ -224,7 +224,7 @@ export class UserExtensionsManager {
       let iconBSON = '';
       if (iconPath) {
         const iconPathFull = join(...pathToExtensionsFolder, iconPath);
-        iconBSON = await readFile(iconPathFull, 'base64').catch(() => {});
+        iconBSON = await readFile(iconPathFull, 'base64').catch(() => { });
       }
 
       return {
@@ -292,4 +292,4 @@ const copyFolder = async (fromPath, destPath) => {
   return Promise.all(promises);
 };
 
-export default UserExtensionsManager;
+module.exports = { UserExtensionsManager };

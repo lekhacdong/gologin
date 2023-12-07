@@ -1,13 +1,13 @@
-import requestretry from 'requestretry';
+const requestretry = require('requestretry');
 
-import { API_URL } from '../utils/common.js';
+const { API_URL } = require('../utils/common.js');
 
 /**
   * @param {string} profileId
   * @param {string} ACCESS_TOKEN
   * @param {string} resolution
 */
-export const updateProfileResolution = (profileId, ACCESS_TOKEN, resolution) =>
+const updateProfileResolution = (profileId, ACCESS_TOKEN, resolution) =>
   requestretry.patch(`${API_URL}/browser/${profileId}/resolution`, {
     headers: {
       Authorization: `Bearer ${ACCESS_TOKEN}`,
@@ -28,7 +28,7 @@ export const updateProfileResolution = (profileId, ACCESS_TOKEN, resolution) =>
   * @param {string} ACCESS_TOKEN
   * @param {string} userAgent
 */
-export const updateProfileUserAgent = (profileId, ACCESS_TOKEN, userAgent) =>
+const updateProfileUserAgent = (profileId, ACCESS_TOKEN, userAgent) =>
   requestretry.patch(`${API_URL}/browser/${profileId}/ua`, {
     headers: {
       Authorization: `Bearer ${ACCESS_TOKEN}`,
@@ -54,7 +54,7 @@ export const updateProfileUserAgent = (profileId, ACCESS_TOKEN, userAgent) =>
   * @param {string} [browserProxyData.username]
   * @param {string} [browserProxyData.password]
 */
-export const updateProfileProxy = (profileId, ACCESS_TOKEN, browserProxyData) =>
+const updateProfileProxy = (profileId, ACCESS_TOKEN, browserProxyData) =>
   requestretry.patch(`${API_URL}/browser/${profileId}/proxy`, {
     headers: {
       Authorization: `Bearer ${ACCESS_TOKEN}`,
@@ -75,7 +75,7 @@ export const updateProfileProxy = (profileId, ACCESS_TOKEN, browserProxyData) =>
   * @param {string} ACCESS_TOKEN
   * @param {Object} bookmarks
 */
-export const updateProfileBookmarks = async (profileIds, ACCESS_TOKEN, bookmarks) => {
+const updateProfileBookmarks = async (profileIds, ACCESS_TOKEN, bookmarks) => {
   const params = {
     profileIds,
     bookmarks,
@@ -93,3 +93,9 @@ export const updateProfileBookmarks = async (profileIds, ACCESS_TOKEN, bookmarks
   }).catch((error) => console.log(error));
 };
 
+module.exports = {
+  updateProfileResolution,
+  updateProfileUserAgent,
+  updateProfileProxy,
+  updateProfileBookmarks
+};

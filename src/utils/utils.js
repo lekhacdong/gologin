@@ -1,8 +1,8 @@
-import { readdirSync, statSync } from 'node:fs';
-import net from 'node:net';
-import { join } from 'node:path';
+const { readdirSync, statSync } = require('node:fs');
+const net = require('node:net');
+const { join } = require('node:path');
 
-export const get = (value, path, defaultValue) =>
+const get = (value, path, defaultValue) =>
   String(path).split('.').reduce((acc, v) => {
     try {
       acc = acc[v] ? acc[v] : defaultValue;
@@ -13,7 +13,7 @@ export const get = (value, path, defaultValue) =>
     return acc;
   }, value);
 
-export const isPortReachable = (port) => new Promise(resolve => {
+const isPortReachable = (port) => new Promise(resolve => {
   const checker = net.createServer()
     .once('error', () => {
       resolve(false);
@@ -22,7 +22,7 @@ export const isPortReachable = (port) => new Promise(resolve => {
     .listen(port);
 });
 
-export const findLatestBrowserVersionDirectory = (browserPath) => {
+const findLatestBrowserVersionDirectory = (browserPath) => {
   const folderContents = readdirSync(browserPath);
   const directories = folderContents.filter(file => statSync(join(browserPath, file)).isDirectory());
 
@@ -47,3 +47,8 @@ export const findLatestBrowserVersionDirectory = (browserPath) => {
   return folderName;
 };
 
+module.exports = {
+  get,
+  isPortReachable,
+  findLatestBrowserVersionDirectory
+}

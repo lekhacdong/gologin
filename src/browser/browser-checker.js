@@ -1,15 +1,15 @@
-import { exec as execNonPromise } from 'child_process';
-import decompress from 'decompress';
-import decompressUnzip from 'decompress-unzip';
-import { createWriteStream, promises as _promises } from 'fs';
-import { get } from 'https';
-import { homedir } from 'os';
-import { join } from 'path';
-import ProgressBar from 'progress';
-import { createInterface } from 'readline';
-import util from 'util';
+const { exec: execNonPromise } = require('child_process');
+const decompress = require('decompress');
+const decompressUnzip = require('decompress-unzip');
+const { createWriteStream, promises: _promises } = require('fs');
+const { get } = require('https');
+const { homedir } = require('os');
+const { join } = require('path');
+const ProgressBar = require('progress');
+const { createInterface } = require('readline');
+const util = require('util');
 
-import { findLatestBrowserVersionDirectory } from '../utils/utils.js';
+const { findLatestBrowserVersionDirectory } = require('../utils/utils.js');
 
 const exec = util.promisify(execNonPromise);
 const { access, mkdir, readdir, rmdir, unlink, copyFile, readlink, symlink, lstat, rename, writeFile } = _promises;
@@ -43,7 +43,7 @@ const MAC_ARM_HASHFILE_LINK = `https://orbita-browser-mac-arm.gologin.com/${MAC_
 const FAIL_SUM_MATCH_MESSAGE = 'hash_sum_not_matched';
 const EXTRACTED_FOLDER = 'extracted-browser';
 
-export class BrowserChecker {
+class BrowserChecker {
   #homedir;
   #browserPath;
   #executableFilePath;
@@ -409,4 +409,4 @@ export class BrowserChecker {
   }
 }
 
-export default BrowserChecker;
+module.exports = { BrowserChecker };

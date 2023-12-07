@@ -1,10 +1,10 @@
-import decompress from 'decompress';
-import decompressUnzip from 'decompress-unzip';
-import { promises } from 'fs';
+const decompress = require('decompress');
+const decompressUnzip = require('decompress-unzip');
+const { promises } = require('fs');
 
 const { access, unlink } = promises;
 
-export const extractExtension = (source, dest) => {
+const extractExtension = (source, dest) => {
   if (!(source && dest)) {
     throw new Error('Missing parameter');
   }
@@ -22,7 +22,7 @@ export const extractExtension = (source, dest) => {
     );
 }
 
-export const deleteExtensionArchive = (dest) => {
+const deleteExtensionArchive = (dest) => {
   if (!dest) {
     throw new Error('Missing parameter');
   }
@@ -53,4 +53,8 @@ const withRetry = optionsOrUndefined => {
       withRetry(opts),
     );
   });
+};
+module.exports = {
+  extractExtension,
+  deleteExtensionArchive,
 };

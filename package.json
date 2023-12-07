@@ -10,7 +10,6 @@
   "engines": {
     "node": ">=14.0.0"
   },
-  "type": "module",
   "author": "The GoLogin Authors",
   "license": "GPL-3.0",
   "dependencies": {
